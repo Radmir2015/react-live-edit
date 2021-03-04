@@ -39,7 +39,7 @@ io.on('connection', async (socket) => {
 				roomId
 			}
 		} else {
-			socket.emit('documentNotFound');
+			socket.emit('documentNotFound', roomId);
 		}
 	}
 
@@ -54,11 +54,13 @@ io.on('connection', async (socket) => {
 			// socket.leave(roomId)
 	});
 
-	socket.on('stateChanged', (newState) => {
+	socket.on('stateChanged', (newState, account) => {
 		// state = { ...state, ...newState.state }	
 		global.storage[newState.roomId] = { state: { ...(global.storage[newState.roomId] && global.storage[newState.roomId].state), ...newState.state }, roomId: newState.roomId }
 		console.log('new state', newState, global.storage)
 		socket.broadcast.emit('stateUpdated', newState)
+
+		socket.broadcast.emit('documentEdited', newState.roomId, account, Object.keys(newState.state)[0])
 	})
 });
 
