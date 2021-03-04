@@ -1,10 +1,13 @@
 import {
   Button,
   createStyles,
+  Fade,
   Grid,
   makeStyles,
   TextField,
-  Theme
+  Theme,
+  Tooltip,
+  Zoom
 } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
 import LiveTitle from "./LiveEdit/LiveTitle";
@@ -12,7 +15,7 @@ import BaseSelect from "./Base/BaseSelect";
 import HOCLive from "./HOC/HOC";
 // import { useLive } from "../hooks/useLive";
 import {
-  subscribeToEvent,
+  subscribeToEventWithRoom,
   subscribeWithRoom,
   dispatchWithRoom,
   createSocket
@@ -20,6 +23,7 @@ import {
 import config from "../config";
 import axios from "axios";
 import ReactTooltip from "react-tooltip";
+import MyTooltip from "./MyTooltip";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -51,6 +55,8 @@ const EditableForm = (props: {
 
   const [submitted, setSubmitted] = useState(false);
   const [previewMode, setPreviewMode] = useState(submitted || !accountId);
+  // const [tooltipOpen, setTooltipOpen] = useState(false);
+  // const [tooltipData, setTooltipData] = useState(0);
 
   console.log("entering to form", roomId);
   // const [roomId, setRoomId] = useState(props.params.roomId || "");
@@ -62,8 +68,10 @@ const EditableForm = (props: {
 
   const buildLive = (socketRef: any, roomId: string) => ({
     subscribe: subscribeWithRoom(socketRef, roomId),
-    dispatch: dispatchWithRoom(socketRef, roomId)
+    dispatch: dispatchWithRoom(socketRef, roomId, accountId)
   });
+
+  let eventHandler: Function = () => {};
 
   // const [live, setLive] = useState(buildLive(socketRef, roomId));
   let socketRef = useRef<any>(null),
@@ -79,15 +87,22 @@ const EditableForm = (props: {
         "submitted" in state && setSubmitted(state.submitted)
     );
 
-    subscribeToEvent(
+    subscribeToEventWithRoom(
       socketRef.current,
-      "documentNotFound"
+      "documentNotFound",
+      roomId
     )(() => {
       alert(
         `This room (${roomId}) doesn't exist, we are creating a new room for you`
       );
       props.history.replace({ pathname: `/` });
     });
+
+    eventHandler = subscribeToEventWithRoom(
+      socketRef.current,
+      "documentEdited",
+      roomId
+    );
   }
 
   useEffect(() => {
@@ -162,51 +177,64 @@ const EditableForm = (props: {
           </h3>
           <form noValidate autoComplete="off">
             <fieldset style={{ border: "0 none" }} disabled={!accountId}>
-              <Grid
-                className={classes.marginForField}
-                item
-                xs={12}
-                data-tip="tip"
-              >
-                <LiveTitle live={live} disabled={previewMode} />
-              </Grid>
-              {/* <ReactTooltip place="right" type="dark" effect="solid" /> */}
+              {/* <Tooltip
+                title={`is being edited by ${tooltipData}`}
+                placeholder="bottom"
+                arrow
+                disableFocusListener
+                disableHoverListener
+                disableTouchListener
+                TransitionComponent={Zoom}
+                // TransitionProps={{ timeout: 300 }}
+                open={tooltipOpen}
+              > */}
+              <MyTooltip eventHandler={eventHandler} triggerKey="title">
+                <Grid className={classes.marginForField} item xs={12}>
+                  <LiveTitle live={live} disabled={previewMode} />
+                </Grid>
+              </MyTooltip>
 
-              <Grid className={classes.marginForField} item xs={12}>
-                <HOCLive
-                  live={live}
-                  component={BaseSelect}
-                  stateKey="select"
-                  disabled={previewMode}
-                />
-              </Grid>
+              <MyTooltip eventHandler={eventHandler} triggerKey="select">
+                <Grid className={classes.marginForField} item xs={12}>
+                  <HOCLive
+                    live={live}
+                    component={BaseSelect}
+                    stateKey="select"
+                    disabled={previewMode}
+                  />
+                </Grid>
+              </MyTooltip>
 
-              <Grid className={classes.marginForField} item xs={12}>
-                <HOCLive
-                  live={live}
-                  component={TextField}
-                  stateKey="date"
-                  id="date"
-                  label="Date"
-                  type="date"
-                  // defaultValue="2017-05-24"
-                  InputLabelProps={{
-                    shrink: true
-                  }}
-                  disabled={previewMode}
-                />
-              </Grid>
+              <MyTooltip eventHandler={eventHandler} triggerKey="date">
+                <Grid className={classes.marginForField} item xs={12}>
+                  <HOCLive
+                    live={live}
+                    component={TextField}
+                    stateKey="date"
+                    id="date"
+                    label="Date"
+                    type="date"
+                    // defaultValue="2017-05-24"
+                    InputLabelProps={{
+                      shrink: true
+                    }}
+                    disabled={previewMode}
+                  />
+                </Grid>
+              </MyTooltip>
 
-              <Grid className={classes.marginForField} item xs={12}>
-                <HOCLive
-                  live={live}
-                  component={TextField}
-                  stateKey="description"
-                  multiline
-                  label="Description"
-                  disabled={previewMode}
-                />
-              </Grid>
+              <MyTooltip eventHandler={eventHandler} triggerKey="description">
+                <Grid className={classes.marginForField} item xs={12}>
+                  <HOCLive
+                    live={live}
+                    component={TextField}
+                    stateKey="description"
+                    multiline
+                    label="Description"
+                    disabled={previewMode}
+                  />
+                </Grid>
+              </MyTooltip>
               {!previewMode ? (
                 <Button
                   variant="contained"
