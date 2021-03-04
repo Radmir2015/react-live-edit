@@ -147,22 +147,24 @@ describe("Test suite for live editing", function () {
 			let liveElement = await driver.findElements(By.css(inputsSelectors[inputN]));
 			await liveElement[0].sendKeys(originalText);
 
+			await driver.sleep(500);
 			const firstInputText = await liveElement[0].getAttribute("value");
 			assert(firstInputText.includes(originalText));
 			// assert(firstInputText.endsWith(originalText));
-
-			await driver.sleep(1000);
+			
+			await driver.sleep(2000);
 			// await driver.manage().setTimeouts( { implicit: 5000 } );
 			
 			await driver.switchTo().window(tabs[(tabN + 1) % tabs.length]);
 			
 			liveElement = await driver.findElements(By.css(inputsSelectors[inputN]));
 			await liveElement[0].sendKeys(originalText);
+			await driver.sleep(500);
 			const secondInputText = await liveElement[0].getAttribute("value");
 			
 			// console.log(secondInputText, firstInputText)
 			assert(secondInputText.includes(firstInputText));
-			await driver.sleep(1000);
+			await driver.sleep(2000);
 			// await driver.manage().setTimeouts( { implicit: 5000 } );
 		}
 
