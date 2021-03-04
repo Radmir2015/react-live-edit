@@ -1,10 +1,10 @@
 require('dotenv').config()
 const assert = require('assert');
-const { Builder, By, Key, until, ActionChains } = require('selenium-webdriver');
+const { Builder, By, until } = require('selenium-webdriver');
 
 const Firefox = require('selenium-webdriver/firefox');
 
-const URL = 'https://74334.csb.app/';
+const URL = process.env.TEST_URL;
 
 const USERNAME = process.env.LT_USERNAME;
  
@@ -22,16 +22,21 @@ const capabilities = {
 
 const gridUrl = 'https://' + USERNAME + ':' + KEY + '@' + GRID_HOST;
 
+const isLocalBrowserTest = process.env.LOCAL_BROWSER;
+
 const buildDriver = async () => {
-	return await new Builder()
-		// .forBrowser('firefox')
-		// .setFirefoxOptions(
-		// 	new Firefox.Options()
-		// 	// .headless()
-		// )
-		.usingServer(gridUrl)
-        .withCapabilities(capabilities)
-		.build()
+	return isLocalBrowserTest
+		? await new Builder()
+			.forBrowser('firefox')
+			.setFirefoxOptions(
+				new Firefox.Options()
+				.headless()
+			)
+			.build()
+		: await new Builder()
+			.usingServer(gridUrl)
+			.withCapabilities(capabilities)
+			.build()
 }
 
 function makeid(length, onlyNum = false) {
@@ -63,7 +68,6 @@ describe("Test suite for live editing", function () {
 		const headerText = await headerElement[0].getText();
 
 		assert(headerText == "Live editing!");
-		// done();
 	});
 
 	step("should have all inputs (title, select, date, textarea)", async () => {
@@ -131,7 +135,7 @@ describe("Test suite for live editing", function () {
 			await loginButton[1].click();
 
 			await driver.wait(until.stalenessOf(dialog[0]), 10000);
-			// async () => !(await dialog[0].isDisplayed()), 10000);
+
 			const element = await driver.findElements(By.xpath("//*[contains(text(), 'Create a new document')]"));
 			assert(element.length > 0);
 		})
@@ -150,10 +154,8 @@ describe("Test suite for live editing", function () {
 			await driver.sleep(500);
 			const firstInputText = await liveElement[0].getAttribute("value");
 			assert(firstInputText.includes(originalText));
-			// assert(firstInputText.endsWith(originalText));
 			
 			await driver.sleep(2000);
-			// await driver.manage().setTimeouts( { implicit: 5000 } );
 			
 			await driver.switchTo().window(tabs[(tabN + 1) % tabs.length]);
 			
@@ -162,20 +164,11 @@ describe("Test suite for live editing", function () {
 			await driver.sleep(500);
 			const secondInputText = await liveElement[0].getAttribute("value");
 			
-			// console.log(secondInputText, firstInputText)
 			assert(secondInputText.includes(firstInputText));
 			await driver.sleep(2000);
-			// await driver.manage().setTimeouts( { implicit: 5000 } );
 		}
 
 		before(async () => {
-			// await (await driver.findElement(By.css("body"))).sendKeys(Keys.CONTROL + "t");
-			// const action_chains = driver.actions()
-
-			// action_chains.keyDown(Key.ALT).sendKeys('d').perform()
-			// await action_chains.keyDown(Key.ALT).sendKeys('d').keyDown(Key.ENTER).perform()
-			// action_chains.keyDown(Key.ENTER).perform()
-			// await action_chains.keyUp(Key.ALT).keyUp(Key.ENTER).perform()
 			const tabUrl = await driver.getCurrentUrl();
 			await driver.switchTo().newWindow('tab');
 			await driver.get(tabUrl);
@@ -206,13 +199,15 @@ describe("Test suite for live editing", function () {
 	})
 
 	afterEach(async function () {
+		if (isLocalBrowserTest) return;
+
 		if (this.currentTest.isPassed) {
 		  await driver.executeScript("lambda-status=passed");
 		} else {
 		  await driver.executeScript("lambda-status=failed");
 		}
-		// done();
 	});
+
 	after(async function () {
 		await driver.quit()
 	})
