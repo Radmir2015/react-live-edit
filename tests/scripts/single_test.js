@@ -159,7 +159,7 @@ describe("Test suite for live editing", function () {
 			const secondInputText = await liveElement[0].getAttribute("value");
 			
 			// console.log(secondInputText, firstInputText)
-			assert(secondInputText.startsWith(firstInputText));
+			assert(secondInputText.includes(firstInputText));
 			await driver.manage().setTimeouts( { implicit: 2000 } );
 		}
 
