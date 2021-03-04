@@ -151,7 +151,8 @@ describe("Test suite for live editing", function () {
 			assert(firstInputText.includes(originalText));
 			// assert(firstInputText.endsWith(originalText));
 
-			await driver.manage().setTimeouts( { implicit: 5000 } );
+			await driver.sleep(1000);
+			// await driver.manage().setTimeouts( { implicit: 5000 } );
 			
 			await driver.switchTo().window(tabs[(tabN + 1) % tabs.length]);
 			
@@ -161,7 +162,8 @@ describe("Test suite for live editing", function () {
 			
 			// console.log(secondInputText, firstInputText)
 			assert(secondInputText.includes(firstInputText));
-			await driver.manage().setTimeouts( { implicit: 5000 } );
+			await driver.sleep(1000);
+			// await driver.manage().setTimeouts( { implicit: 5000 } );
 		}
 
 		before(async () => {
