@@ -148,7 +148,8 @@ describe("Test suite for live editing", function () {
 			await liveElement[0].sendKeys(originalText);
 
 			const firstInputText = await liveElement[0].getAttribute("value");
-			assert(firstInputText.endsWith(originalText));
+			assert(firstInputText.includes(originalText));
+			// assert(firstInputText.endsWith(originalText));
 
 			await driver.manage().setTimeouts( { implicit: 2000 } );
 			
