@@ -61,8 +61,8 @@ jobs:
       - image: cimg/node:15.1
 
     steps:
-      - checkout:
-          path: ~/project
+      # - checkout:
+      #     path: ~/project
 
       - node/install-packages
 
@@ -78,8 +78,8 @@ jobs:
 
     steps:
       - browser-tools/install-browser-tools
-      - checkout:
-          path: ~/project
+      # - checkout:
+      #     path: ~/project
 
       - node/install-packages
 
