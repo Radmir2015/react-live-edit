@@ -1,20 +1,5 @@
-import { createStyles, makeStyles, TextField, Theme } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-import { subscribeToGlobalState, dispatchGlobalState } from "../api";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    formControl: {
-      minWidth: 165
-    },
-    marginForField: {
-      marginBottom: theme.spacing(3)
-    },
-    selectEmpty: {
-      marginTop: theme.spacing(2)
-    }
-  })
-);
+import { TextField } from "@material-ui/core";
+import React from "react";
 
 interface BasePropsType {
   title: string;

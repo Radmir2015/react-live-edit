@@ -1,19 +1,15 @@
 import {
   Button,
   createStyles,
-  Fade,
   Grid,
   makeStyles,
   TextField,
-  Theme,
-  Tooltip,
-  Zoom
+  Theme
 } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
 import LiveTitle from "./LiveEdit/LiveTitle";
 import BaseSelect from "./Base/BaseSelect";
 import HOCLive from "./HOC/HOC";
-// import { useLive } from "../hooks/useLive";
 import {
   subscribeToEventWithRoom,
   subscribeWithRoom,
@@ -22,9 +18,7 @@ import {
 } from "../api";
 import config from "../config";
 import axios from "axios";
-import ReactTooltip from "react-tooltip";
 import MyTooltip from "./MyTooltip";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,30 +35,14 @@ const EditableForm = (props: {
 }) => {
   const classes = useStyles();
 
-  // const { subscribeToGlobalState, dispatchGlobalState } = useLive("root");
-  // const live = {
-  //   subscribe: subscribeToGlobalState,
-  //   dispatch: dispatchGlobalState
-  // };
-
-  // const [accountId, setAccountId] = useLocalStorage("accountId", 0);
   const [accountId, setAccountId] = props.account;
 
-  // const roomId = useRef(props.params.roomId);
   const { roomId } = props.params;
 
   const [submitted, setSubmitted] = useState(false);
   const [previewMode, setPreviewMode] = useState(submitted || !accountId);
-  // const [tooltipOpen, setTooltipOpen] = useState(false);
-  // const [tooltipData, setTooltipData] = useState(0);
 
-  console.log("entering to form", roomId);
-  // const [roomId, setRoomId] = useState(props.params.roomId || "");
-  // const [socketRef, setSocket] = useState(createSocket(props.params.roomId));
-  // const live = useRef({
-  //   subscribe: (cb: any) => cb,
-  //   dispatch: (st: any) => st
-  // });
+  // console.log("Entering to the room", roomId);
 
   const buildLive = (socketRef: any, roomId: string) => ({
     subscribe: subscribeWithRoom(socketRef, roomId),
@@ -73,14 +51,12 @@ const EditableForm = (props: {
 
   let eventHandler: Function = () => {};
 
-  // const [live, setLive] = useState(buildLive(socketRef, roomId));
   let socketRef = useRef<any>(null),
     live: { subscribe: any; dispatch: any } | null = null;
 
   if (roomId) {
     if (!socketRef.current) socketRef.current = createSocket(roomId);
     live = buildLive(socketRef.current, roomId);
-    console.log("live here is", live, socketRef);
 
     live.subscribe(
       (_: any, state: { submitted: boolean }) =>
@@ -107,16 +83,10 @@ const EditableForm = (props: {
 
   useEffect(() => {
     const getRoomId = async () => {
-      const response = await axios.get(config.SERVER_URL);
-      console.log("response", response.data.roomId);
-      // setRoomId(response.data.roomId);
-      console.log("now room is", roomId);
+      const response = await axios.get(config.SERVER_URL as string);
+
       props.history.replace({ pathname: `/${response.data.roomId}` });
     };
-    // console.log(roomId.current.roomId)
-
-    // socketRef.disconnect();
-    // socketRef.current = createSocket(roomId.current);
 
     if (!roomId) getRoomId();
   }, [roomId]);
@@ -127,23 +97,6 @@ const EditableForm = (props: {
     submitted,
     accountId
   ]);
-
-  // useEffect(() => {
-  //   // setSocket(createSocket(roomId));
-  //   // socketRef.current = createSocket(roomId);
-  //   props.history.replace({ pathname: `/${roomId}` });
-  //   console.log("now room is", roomId);
-  // }, [roomId]);
-
-  // useEffect(() => {
-  //   console.log("ref updated", roomId, socketRef.current);
-  //   setLive(buildLive(socketRef.current, roomId));
-  // }, [socketRef.current]);
-
-  // const Description = HOCLive(
-  //   (props) => <TextField multiline label="Description" {...props} />,
-  //   "description"
-  // );
 
   const handleSubmit = async () => {
     try {
@@ -177,17 +130,6 @@ const EditableForm = (props: {
           </h3>
           <form noValidate autoComplete="off">
             <fieldset style={{ border: "0 none" }} disabled={!accountId}>
-              {/* <Tooltip
-                title={`is being edited by ${tooltipData}`}
-                placeholder="bottom"
-                arrow
-                disableFocusListener
-                disableHoverListener
-                disableTouchListener
-                TransitionComponent={Zoom}
-                // TransitionProps={{ timeout: 300 }}
-                open={tooltipOpen}
-              > */}
               <MyTooltip eventHandler={eventHandler} triggerKey="title">
                 <Grid className={classes.marginForField} item xs={12}>
                   <LiveTitle live={live} disabled={previewMode} />
@@ -214,7 +156,6 @@ const EditableForm = (props: {
                     id="date"
                     label="Date"
                     type="date"
-                    // defaultValue="2017-05-24"
                     InputLabelProps={{
                       shrink: true
                     }}

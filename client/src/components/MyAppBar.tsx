@@ -15,7 +15,6 @@ import {
   Typography
 } from "@material-ui/core";
 import { Menu } from "@material-ui/icons";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 import config from "../config";
 import axios from "axios";
 import React from "react";
@@ -39,12 +38,10 @@ export default function MyAppBar(props: { account: any }) {
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // const [accountId, setAccountId] = useLocalStorage("accountId", 0);
   const [accountId, setAccountId] = props.account;
 
   const handleAuth = async () => {
     if (accountId) {
-      // alert('You already logged in')
       setAccountId(0);
       return;
     }

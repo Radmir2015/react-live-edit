@@ -1,14 +1,10 @@
 import openSocket from "socket.io-client";
 import config from "./config";
 
-let socket: any = null;
-
 export function createSocket(roomId: string) {
-  // console.log("socket", roomId, typeof roomId, roomId.toString());
-  // socket?.close();
-  return (socket = openSocket(config.SERVER_URL, {
+  return openSocket(config.SERVER_URL as string, {
     query: { roomId }
-  }));
+  });
 }
 
 export function subscribeToGlobalState(socket: any, cb: Function) {
@@ -53,4 +49,3 @@ export function subscribeToEventWithRoom(
     );
   };
 }
-// export { subscribeToTimer }

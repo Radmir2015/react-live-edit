@@ -1,8 +1,9 @@
 import { useRef, useEffect } from "react";
+import config from "../config";
 
 import io from "socket.io-client";
 
-const URL = "//818f79271846.ngrok.io/";
+const URL = config.SERVER_URL as string;
 
 export const useLive = (roomId: string) => {
   const socketRef = useRef<any>(null);
@@ -14,12 +15,10 @@ export const useLive = (roomId: string) => {
   }, [roomId]);
 
   const subscribeToGlobalState = (cb: Function) => {
-    // console.log("stateUpdated");
     socketRef.current?.on("stateUpdated", (state: object) => cb(null, state));
   };
 
   const dispatchGlobalState = (newState: object) => {
-    // console.log("stateChanged");
     socketRef.current?.emit("stateChanged", newState);
   };
 

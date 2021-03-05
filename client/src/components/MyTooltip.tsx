@@ -16,8 +16,6 @@ export default function MyTooltip(props: any) {
     }
   });
 
-  // React.children.only(props.)
-
   return (
     <Tooltip
       title={`is being edited by ${tooltipData}`}
