@@ -61,8 +61,8 @@ jobs:
       - image: cimg/node:15.1
 
     steps:
-      # - checkout:
-      #     path: ~/project
+      - checkout:
+          path: ~/project
 
       - node/install-packages
 
@@ -78,8 +78,8 @@ jobs:
 
     steps:
       - browser-tools/install-browser-tools
-      # - checkout:
-      #     path: ~/project
+      - checkout:
+          path: ~/project
 
       - node/install-packages
 
@@ -92,7 +92,7 @@ workflows:
   # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
   # CircleCI will run this workflow on every commit.
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
-  sample: 
+  sample:
     jobs:
       - build-and-test-manual
 
