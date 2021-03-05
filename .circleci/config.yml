@@ -39,7 +39,7 @@ jobs:
     working_directory: ~/project/server
     docker:
       - image: cimg/node:15.1
-      - image: circleci/postgres:9.6.9-alpine
+      - image: circleci/postgres:latest
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
