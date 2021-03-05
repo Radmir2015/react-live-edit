@@ -16,10 +16,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'uploads')));
 app.use(morgan('dev'));
 
-// app.use('/', apiRouter);
-
 app.get('/', (req, res) => {
-  // res.sendFile(__dirname + '/index.html');
 	const randomId = nanoid(8);
 	global.storage = { ...global.storage, [randomId]: { roomId: randomId, state: {} } };
 	res
@@ -32,7 +29,6 @@ app.get('/', (req, res) => {
 app.post('/auth', (req, res) => {
 	const { login, password } = req.body;
 
-	console.log(login, password, db)
 	const account = db.find(x => x.login === login && x.password === password);
 
 	if (!account) {
@@ -55,7 +51,6 @@ app.post('/auth', (req, res) => {
 const checkAuth = (req, res, next) => {
 	const token = req.headers['x-access-token'] || req.headers['authorization'] || '';
 
-	console.log(db, token)
 	if (!db.some(x => "" + x.id === token))
 		return res.status(401).json({
 			message: 'unauthorized'
