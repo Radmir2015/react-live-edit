@@ -12,7 +12,7 @@ orbs:
 
 jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
-  build-and-test-manual:  
+  build-and-test:  
     working_directory: ~/project/tests
     # These next lines define a docker executor: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
@@ -92,14 +92,14 @@ workflows:
   # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
   # CircleCI will run this workflow on every commit.
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
-  sample:
+  test:
     jobs:
-      - build-and-test-manual
+      - build-and-test
 
-  local-test:
-    jobs:
-      - build-server
-      - build-client
-      - build-and-run-tests
+  # local-test:
+  #   jobs:
+  #     - build-server
+  #     - build-client
+  #     - build-and-run-tests
       # For running simple node tests, you could optionally use the node/test job from the orb to replicate and replace the job above in fewer lines.
       # - node/test
